@@ -56,33 +56,37 @@ import { IpAddressService } from './ip-address.service'
   providedIn: 'root',
 })
 export class WeatherService implements IWeatherService {
-  url = 'https://api.openweathermap.org/data/2.5/weather?'
-  appId = 'bc3a6b1fa0d1298825bca3693c80c236'
   constructor(private http: HttpClient, private ips: IpAddressService) {}
 
-  getCurrent(): Observable<ICurrentWeather> {
-    return this.ips.getCity().pipe(
-      switchMap(city => {
-        const query = [`q=${city}`, `appid=${this.appId}`, 'units=metric']
-        return this.http.get(this.url + query.join('&'))
-      }),
+  getForecaseFor(cityName: string) {
+    const appId = 'bc3a6b1fa0d1298825bca3693c80c236'
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${appId}&units=metric`
+
+    return this.http.get(url).pipe(
       map((data: OpenWeatherMapJson) => {
         const {
           name: city,
           sys: { country },
           dt,
-          weather: [{ description, icon: image }],
+          weather: [{ description, icon }],
           main: { temp: temperature },
         } = data
 
         return {
           city,
           country,
-          date: dt,
-          image: `https://openweathermap.org/img/w/${image}.png`,
+          date: dt * 1000,
+          image: `https://openweathermap.org/img/w/${icon}.png`,
           temperature,
           description,
         } as ICurrentWeather
+      })
+    )
+  }
+  getCurrent(): Observable<ICurrentWeather> {
+    return this.ips.getCity().pipe(
+      switchMap(city => {
+        return this.getForecaseFor(city)
       })
     )
   }
