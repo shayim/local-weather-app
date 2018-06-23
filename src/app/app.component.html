@@ -5,6 +5,10 @@
 </mat-toolbar>
 <div fxLayoutAlign="center">
   <div class="mat-caption vertical-margin">Your city, your forecase, right now!</div>
+
+</div>
+<div fxLayoutAlign="center">
+  <app-city-search (search)="onSearch($event)"></app-city-search>
 </div>
 
 <div fxLayout="row" fxLayoutAlign="center center">
@@ -16,7 +20,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <app-current-weather></app-current-weather>
+      <app-current-weather [current]="current"></app-current-weather>
     </mat-card-content>
   </mat-card>
   <div fxFlex></div>

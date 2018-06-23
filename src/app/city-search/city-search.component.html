@@ -1,0 +1,7 @@
+<form [formGroup]="searchForm">
+  <mat-form-field>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput formControlName="search" type="text" placeholder="enter your city or zipcode">
+    <mat-error *ngIf="searchForm.controls['search'].getError('minlength')">min length 2</mat-error>
+  </mat-form-field>
+</form>

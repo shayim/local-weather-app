@@ -56,12 +56,54 @@ import { IpAddressService } from './ip-address.service'
   providedIn: 'root',
 })
 export class WeatherService implements IWeatherService {
+  private appId = 'bc3a6b1fa0d1298825bca3693c80c236'
   constructor(private http: HttpClient, private ips: IpAddressService) {}
 
-  getForecaseFor(cityName: string) {
-    const appId = 'bc3a6b1fa0d1298825bca3693c80c236'
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${appId}&units=metric`
+  searchByCityNameOrZipcode(query: string): Observable<ICurrentWeather> {
+    if (isNaN(parseInt(query, 10))) {
+      return this.getForecastByCity(query)
+    }
 
+    return this.getForecastByZip(query)
+  }
+
+  getForecastByCity(name: string, countryCode?: string) {
+    const q = countryCode ? `${name},${countryCode}` : `${name}`
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${q}&appid=${
+      this.appId
+    }&units=metric`
+    return this.getForcast(url)
+  }
+
+  getForecastByZip(code: string) {
+    return this.ips.getCity().pipe(
+      switchMap((data: any) => {
+        const zip = data.countryCode ? `${code},${data.countryCode}` : `${code},us`
+        const url = `https://api.openweathermap.org/data/2.5/weather?zip=${zip}}&appid=${
+          this.appId
+        }&units=metric`
+        return this.getForcast(url)
+      })
+    )
+  }
+
+  getForcastByCoords(lat: string, lon: string) {
+    const q = `lat=${lat}&lon=${lon}`
+    const url = `https://api.openweathermap.org/data/2.5/weather?${q}&appid=${
+      this.appId
+    }&units=metric`
+    return this.getForcast(url)
+  }
+
+  getCurrent(): Observable<ICurrentWeather> {
+    return this.ips.getCity().pipe(
+      switchMap((data: any) => {
+        return this.getForecastByCity(data.city, data.countryCode)
+      })
+    )
+  }
+
+  private getForcast(url: string) {
     return this.http.get(url).pipe(
       map((data: OpenWeatherMapJson) => {
         const {
@@ -80,13 +122,6 @@ export class WeatherService implements IWeatherService {
           temperature,
           description,
         } as ICurrentWeather
-      })
-    )
-  }
-  getCurrent(): Observable<ICurrentWeather> {
-    return this.ips.getCity().pipe(
-      switchMap(city => {
-        return this.getForecaseFor(city)
       })
     )
   }

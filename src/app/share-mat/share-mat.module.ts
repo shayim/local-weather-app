@@ -3,10 +3,23 @@ import {
   MatButtonModule,
   MatCardModule,
   MatIconModule,
+  MatInputModule,
   MatToolbarModule,
 } from '@angular/material'
 @NgModule({
-  imports: [MatButtonModule, MatCardModule, MatIconModule, MatToolbarModule],
-  exports: [MatButtonModule, MatCardModule, MatIconModule, MatToolbarModule],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatInputModule,
+    MatToolbarModule,
+  ],
+  exports: [
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatInputModule,
+    MatToolbarModule,
+  ],
 })
 export class ShareMatModule {}

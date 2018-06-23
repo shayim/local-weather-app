@@ -10,7 +10,9 @@ export class DateSequencePipe implements PipeTransform {
     const seq =
       (date > 3 && date < 21) || (date > 23 && date < 31)
         ? 'th'
-        : ['st', 'nd', 'rd'][date % 10]
+        : ['dummy', 'st', 'nd', 'rd'][date % 10]
+
+    console.log(dateStr, date, seq)
     return `${value}${seq}`
   }
 }

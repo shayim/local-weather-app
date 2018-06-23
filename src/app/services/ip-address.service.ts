@@ -29,9 +29,13 @@ export class IpAddressService {
 
   constructor(private http: HttpClient) {}
 
-  getCity(): Observable<string> {
+  getCity(): Observable<Object> {
     return this.http.get(this.url).pipe(
-      map((data: IpFindJson) => data.city),
+      map((data: IpFindJson) => ({
+        city: data.city,
+        country: data.country,
+        countryCode: data.country_code,
+      })),
       catchError(err => {
         console.log(err)
         return `fetch ${this.url} failed.`
